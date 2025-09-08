@@ -1,0 +1,9 @@
+#Use 'sudo docker container inspect mariadb' to get the bridge ip for mariadb.
+#use 'sudo docker cp LocalSettings.php 04618a5bed0c:/var/www/html/' to copy LocalSettings to the mediawiki
+
+#sudo docker run -d --name=mariadb -e PUID=1000 -e PGID=1000 -e MYQL_ROOT_PASSWORD=<rootpasshere> -e TZ=Europe/London -e MYSQL_DATABASE_USER=<dbuserhere> -e MYSQ_PASSWORD=<dbpasswordhere> -p 3306:3306 -v /mnt/tmp/MDBConfig:/config --restart unless-stopped lscr.io/linuxserver/mariadb
+#sleep 10
+
+sudo docker run -p 8080:80/tcp --name fuzzwiki arm32v7/mediawiki
+
+
