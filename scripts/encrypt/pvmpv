@@ -1,0 +1,54 @@
+#!/bin/bash
+echo "starting..."
+
+INPUT="$1"
+TMPFILE="./transcoded_$(basename "$INPUT")"
+
+# Set this to 1 if you want preview mode (4 chunks + final segment)
+PREVIEW=1
+TAIL_DURATION=10  # Duration of final segment to extract from end
+
+# Check if re-encoding is needed
+
+        echo "Preview mode active. Extracting summary preview..."
+        TMPDIR="/tmp/chunk_preview_$$"
+        mkdir -p "$TMPDIR"
+        COUNT=0
+
+        # Get total duration in seconds
+        DURATION=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$INPUT")
+        DURATION=${DURATION%.*} # strip decimals
+        INTERVAL=$((DURATION / 5)) # divide into 5 segments, extract from 1–4
+
+        for i in {1..4}; do
+            OFFSET=$((i * INTERVAL))
+            OUT="$TMPDIR/chunk_$COUNT.mkv"
+            ffmpeg -y -ss "$OFFSET" -t 10 -i "$INPUT" \
+                -vf "scale=-2:120,fps=8,format=gray" \
+                -an -c:v libx264 -preset ultrafast -qp 0 -tune zerolatency \
+                -x264-params cabac=0:bframes=0 -fps_mode cfr "$OUT"
+            ((COUNT++))
+        done
+
+        # Add final segment from the tail
+        TAIL_START=$((DURATION - TAIL_DURATION))
+        if [ "$TAIL_START" -gt 0 ]; then
+            OUT="$TMPDIR/chunk_$COUNT.mkv"
+            ffmpeg -y -ss "$TAIL_START" -t "$TAIL_DURATION" -i "$INPUT" \
+                -vf "scale=-2:120,fps=8,format=gray" \
+                -an -c:v libx264 -preset ultrafast -qp 0 -tune zerolatency \
+                -x264-params cabac=0:bframes=0 -fps_mode cfr "$OUT"
+            ((COUNT++))
+        fi
+
+        CONCAT_LIST="$TMPDIR/chunk_list.txt"
+        for ((i=0; i<COUNT; i++)); do
+            echo "file '$TMPDIR/chunk_$i.mkv'" >> "$CONCAT_LIST"
+        done
+
+        ffmpeg -y -f concat -safe 0 -i "$CONCAT_LIST" -c copy "$TMPFILE"
+
+        mpv --no-correct-pts --framedrop=vo --speed=1 --vo=tct --sws-fast=yes "$TMPFILE"
+
+        rm -f "$TMPFILE"
+        rm -rf "$TMPDIR"
