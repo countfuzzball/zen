@@ -1,15 +1,7 @@
 echo hit enter when done.
-echo specify if you used ztv or not. yes or no: 
 read mpoint
 
 
-if [ "$mpoint" == "yes" ]; then
-sudo umount /mnt/zTV/*.crypt.*
-sudo umount /mnt/zTV/*.crypt
-sudo cryptsetup close $imagename
-sudo losetup --detach $nextloopdevice
-sudo rmdir /mnt/zTV/$mountpointname
-else
 #sudo umount /tmp/*.crypt.*
 sudo umount /tmp/*.crypt
 #for imagename in `basename -a /tmp/*.crypt.*`; do
@@ -20,10 +12,10 @@ baseimage=$(echo "$imagename" | sed 's/\.crypt.*//')
 echo closing crypt volume $baseimage
 sudo cryptsetup close $baseimage
 
-detachdevicefull=`losetup --list -n -O NAME,BACK-FILE | grep $baseimage`
+detachdevicefull=`sudo losetup --list -n -O NAME,BACK-FILE | grep $baseimage`
 
 
-detachdeviceimage=`losetup --list -n -O BACK-FILE | grep $baseimage`
+detachdeviceimage=`sudo losetup --list -n -O BACK-FILE | grep $baseimage`
 detachdevice=`echo $detachdevicefull | cut -c 1-11`
 
 echo detachfulllist is $detachdevicefull
@@ -36,7 +28,7 @@ sync;
 sync;
 sudo rmdir /tmp/*.crypt.*
 done
-fi
+
 
 
 

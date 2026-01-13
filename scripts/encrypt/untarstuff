@@ -1,1 +1,1 @@
-for i in *.tar; do tar -xvf $i; done
+for i in *.tar; do tar -xvf "$i"; done

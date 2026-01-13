@@ -11,14 +11,16 @@ fi
 
 # Parameters
 imagename=$1
-filesize=${2:-3760M}
+filesize=${2:-3760}
 keyfile=${3:-/tmp/keyfile}
 
 # Find available loop device
 nextloopdevice=$(losetup --find)
 
 # Allocate file
-sudo truncate -s "$filesize" "$imagename" || { echo "Failed to allocate file"; exit 1; }
+sudo dd if=/dev/zero of=$imagename bs=1M count=$filesize status=progress
+
+#sudo truncate -s "$filesize" "$imagename" || { echo "Failed to allocate file"; exit 1; }
 #sudo fallocate -l "$filesize" "$imagename" || { echo "Failed to allocate file"; exit 1; }
 
 # Setup encryption

@@ -11,7 +11,7 @@ rorw=rw
 
 for img in "$@"; do
  imagename="$img"
- nextloopdevice=`losetup --find`
+ nextloopdevice=`sudo losetup --find`
 # mountpointname="$imagename".crypt.$RANDOM
 # mountpointname="$imagename".crypt.$RANDOM
  mountpointname="$imagename".crypt

@@ -4,7 +4,7 @@
 #   ./ungpgstuff.sh [--symmetric]
 # If --symmetric is provided, symmetric decryption will be used with the keyfile at /tmp/keyfile.
 
-SYMMETRIC=false
+SYMMETRIC=true
 KEYFILE="/tmp/keyfile"
 
 # Check if the script is called with the --symmetric argument
@@ -23,4 +23,5 @@ for i in *.gpg; do
     echo extracting....
     rm "$i"
     tar -xf "$(basename "$i" .gpg).tar"
+    rm $(basename "$i" .gpg).tar
 done
