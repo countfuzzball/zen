@@ -21,6 +21,7 @@ This will take a long time (24 hours+, depending on hardware).
 
 2. Run make_index.sh to generate an indexed list of the title of each of the extracted articles (wiki.index.tsv), a normalised title of the article,
 the wikipedia article id, the filename the article is in, and the linenumber inside the json filename the article is on.
+This will also take a very long time!! I've added an 'echo' so you can see which articles it's processing, rather than seeing nothing at all.
 
 3. Next, you can then query the database using query_index.sh. Either invoke bash on it or make it executable. It takes the argument as a search parameter
 and will search through the index based on keywords and then return a list of articles matching the keywords and prompt you to select an article.

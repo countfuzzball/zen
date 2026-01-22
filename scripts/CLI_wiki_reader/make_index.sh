@@ -30,6 +30,7 @@ find "$ROOT" -type f -name 'wiki_*' | while read -r file; do
       [[ -z "$id" || -z "$title" ]] && continue
 
       title_norm="$(printf '%s\n' "$title" | normalize_title)"
+      echo "$title"
 
       printf '%s\t%s\t%s\t%s\t%s\n' \
         "$title_norm" \
