@@ -1,0 +1,34 @@
+CLI Wiki_Reader -  a tool to make wikipedia pages dumps readable offline from the commandline.
+
+
+You will need:
+Ripgrep
+jq (commandline json processor)
+A full dump of the enwiki-latest-pages-articles.xml.bz2 from wikimedia's archive dump.
+GNU Coreutils ;)
+Python 3.11 or greater
+
+Commandline for wikiextractor (from inside the root wikiextractor directory) is:
+
+"python3 -m wikiextractor.WikiExtractor \ ../enwiki-latest-pages-articles.xml.bz2 \ -o ../wiki_out --json --processes 2"
+
+Note: I've included a patched copy of wikiextractor that solves a pre-processing issue due to Python 3.11's tighter standards for text processing that 3.10 doesn't have.
+
+Process is:
+
+1. Extract the wiki articles from the large xml.bz2 using wikiextractor into json format, preferably to a seperate directory. 
+This will take a long time (24 hours+, depending on hardware).
+
+2. Run make_index.sh to generate an indexed list of the title of each of the extracted articles (wiki.index.tsv), a normalised title of the article,
+the wikipedia article id, the filename the article is in, and the linenumber inside the json filename the article is on.
+
+3. Next, you can then query the database using query_index.sh. Either invoke bash on it or make it executable. It takes the argument as a search parameter
+and will search through the index based on keywords and then return a list of articles matching the keywords and prompt you to select an article.
+
+Any empty articles will be marked as such (This is because wikiextractor strips out Wikimedia code for redirected articles).
+
+The result will then be piped into less with some minimal amount of formatting done for readability. 
+
+I've included an example set of jsoned articles in the AA folder, and a wiki.index.tsv against that AA folder so you have something to experiment with.
+
+Enjoy! :)
